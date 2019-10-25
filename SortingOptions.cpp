@@ -75,7 +75,7 @@ void merge(std::vector<int> &v, int left, int middle, int right){
 
 }//end of merge
 
-void mergeSort(std::vector<int> v, int left, int right){
+void mergeSort(std::vector<int> &v, int left, int right){
 	if(right > left){
 		int middle = (left+right)/2;
 
