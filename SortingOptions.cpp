@@ -40,8 +40,8 @@ void merge(std::vector<int> &v, int left, int middle, int right){
 	//need indeces for left & right halves of array, and for temp array
 	int i=left, j=middle+1, k=left;
 
-	std::cout << "VECTOR BEFORE: " << std::endl;
-	printVector(v);
+	//std::cout << "VECTOR BEFORE: " << std::endl;
+	//printVector(v);
 	
 	/**compare left half to right half
 	 * once either half is done assume the rest are in order */
@@ -66,13 +66,11 @@ void merge(std::vector<int> &v, int left, int middle, int right){
 		temp[k] = v[j];
 		j++, k++;
 	}
+
 	//copy values to original
-	for(int i=0; i<v.size(); i++){
+	for(int i=left; i<= right; i++){
 		v[i] = temp[i];
 	}
-	std::cout << "VECTOR AFTER: " << std::endl;
-	printVector(v);
-
 }//end of merge
 
 void mergeSort(std::vector<int> &v, int left, int right){
@@ -83,16 +81,64 @@ void mergeSort(std::vector<int> &v, int left, int right){
 		mergeSort(v, middle+1, right);
 
 		merge(v, left, middle, right); //this merges them back together
+		printVector(v);
 	}
 }//end of mergeSort
 
-void quickSort(std::vector<int> &v){
-	std::cout << "Original Vector: ";
+/**returns median of the three indeces given for the given vector */
+int median(const std::vector<int> &v, int left, int mid, int right){
+	//cases for if left is the median
+	if(v[left] <= v[right] && v[left] >= v[mid] || 
+		v[left] <= v[mid] && v[left] >= v[right]){
+			return left;
+	}
+	//cases for if mid is the median
+	else if(v[mid] <= v[right] && v[mid] >= v[left] || 
+		v[mid] <= v[left] && v[mid] >= v[right]){
+			return mid;
+	}
+	//only one left is right
+	else{
+		return right;
+	}
+}
+
+int partition(std::vector<int> &v, int left, int right){
+	int mid = (left+right)/2;
+	int pivot = median(v, left, mid, right);
+
+	//bring pivot to the front
+	int temp = v[pivot];
+	v[pivot] = v[left];
+	v[left] = temp; //v[left] is now the pivot
+	
+	int j=left;
+	for(int i = left+1; i <= right; i++){
+		if(v[i] < v[left]){
+			j++;
+			temp = v[i];
+			v[i] = v[j];
+			v[j] = temp;
+		}
+	}
+	pivot=j;
+
+	//put pivot back
+	temp = v[pivot];
+	v[pivot] = v[left];
+	v[left] = temp;
+
 	printVector(v);
-	std::cout << "Vector is now being sorted." << std::endl;
+	return pivot;
+}//end of partition
 
+void quickSort(std::vector<int> &v, int left, int right){
+	if(left < right){
+		int pivot = partition(v, left, right);
+		quickSort(v, left, pivot-1);
+		quickSort(v, pivot+1, right);
+	}
 
-	std::cout << "Vector is now sorted!" << std::endl;
 }//end of quickSort
 
 void insertionSort(std::vector<int> &v){
@@ -100,7 +146,18 @@ void insertionSort(std::vector<int> &v){
 	printVector(v);
 	std::cout << "Vector is now being sorted." << std::endl;
 
-
+	int j;
+	int current;
+	for(int i=1; i<v.size(); i++){
+		current = v[i];
+		j = i-1;
+		while(j >= 0 && current < v[j]){
+			v[j+1] = v[j];
+			j--;
+		}
+		v[j+1] = current;
+		printVector(v);
+	}
 
 	std::cout << "Vector is now sorted!" << std::endl;
 }//end of insertion sort
@@ -118,7 +175,7 @@ int main(){
 	
 	//check to make sure user defined infile works
 	if(!infile){
-		std::cout << "your file for input is invalid"<< std::endl;
+		std::cout << "the file you specifed for input is either not here or invalid"<< std::endl;
 		exit(1);
 	}
 
@@ -162,7 +219,7 @@ int main(){
 			numbers.push_back(stoi(clean));
 			clean.clear();
 		}
-		//TODO: add sorting call
+
 		switch (algorithm){
 			case 1: selectionSort(numbers);
 					break;
@@ -171,17 +228,21 @@ int main(){
 					std::cout << "Vector is now being sorted." << std::endl;
 					mergeSort(numbers, 0, numbers.size()-1);
 					std::cout << "Vector is now sorted!" << std::endl;
-					printVector(numbers);
 					break;
-			case 3: quickSort(numbers);
+			case 3: std::cout << "Original Vector: ";
+					printVector(numbers);
+					std::cout << "Vector is now being sorted." << std::endl;
+					quickSort(numbers, 0, numbers.size()-1);
+					std::cout << "Vector is now sorted!" << std::endl;
 					break;
 			case 4:insertionSort(numbers);
 					break;
 		}
 
 		for(int i=0; i<numbers.size(); i++){
-			outfile << numbers[i] << std::endl;
+			outfile << numbers[i] << " ";
 		}
+		outfile << std::endl;
 
 		numbers.clear();
 	}
