@@ -3,8 +3,8 @@
 #include <vector>
 
 void printVector(const std::vector<int> &v){
-	for(int i=0; i<v.size(); i++){
-		std::cout << v[i] << " ";
+	for(const auto& i : v){
+		std::cout << i << " ";
 	}
 	std::cout << std::endl;
 }
@@ -15,10 +15,10 @@ void selectionSort(std::vector<int> &v){
 	std::cout << "Vector is now being sorted." << std::endl;
 	int lowest, temp;
 
-	for(int i=0; i<v.size()-1; i++){
+	for(size_t i=0; i<v.size()-1; i++){
 		lowest = v[i];
 		temp = i; 
-		for(int j=i+1; j<v.size(); j++){
+		for(size_t j=i+1; j<v.size(); j++){
 			if(v[j] < v[i] && v[j] < lowest){
 				lowest = v[j];
 				temp = j;
@@ -39,9 +39,6 @@ void merge(std::vector<int> &v, int left, int middle, int right){
 
 	//need indeces for left & right halves of array, and for temp array
 	int i=left, j=middle+1, k=left;
-
-	//std::cout << "VECTOR BEFORE: " << std::endl;
-	//printVector(v);
 	
 	/**compare left half to right half
 	 * once either half is done assume the rest are in order */
@@ -79,8 +76,8 @@ void mergeSort(std::vector<int> &v, int left, int right){
 
 		mergeSort(v, left, middle); //these two break down array into sub arrays
 		mergeSort(v, middle+1, right);
-
 		merge(v, left, middle, right); //this merges them back together
+		
 		printVector(v);
 	}
 }//end of mergeSort
@@ -88,13 +85,13 @@ void mergeSort(std::vector<int> &v, int left, int right){
 /**returns median of the three indeces given for the given vector */
 int median(const std::vector<int> &v, int left, int mid, int right){
 	//cases for if left is the median
-	if(v[left] <= v[right] && v[left] >= v[mid] || 
-		v[left] <= v[mid] && v[left] >= v[right]){
+	if(((v[left] <= v[right]) && (v[left] >= v[mid])) 
+		|| ((v[left] <= v[mid]) && (v[left] >= v[right]))){
 			return left;
 	}
 	//cases for if mid is the median
-	else if(v[mid] <= v[right] && v[mid] >= v[left] || 
-		v[mid] <= v[left] && v[mid] >= v[right]){
+	else if((v[mid] <= v[right] && v[mid] >= v[left]) 
+		|| (v[mid] <= v[left] && v[mid] >= v[right])){
 			return mid;
 	}
 	//only one left is right
@@ -110,7 +107,7 @@ int partition(std::vector<int> &v, int left, int right){
 	//bring pivot to the front
 	int temp = v[pivot];
 	v[pivot] = v[left];
-	v[left] = temp; //v[left] is now the pivot
+	v[left] = temp;
 	
 	int j=left;
 	for(int i = left+1; i <= right; i++){
@@ -129,6 +126,7 @@ int partition(std::vector<int> &v, int left, int right){
 	v[left] = temp;
 
 	printVector(v);
+
 	return pivot;
 }//end of partition
 
@@ -138,7 +136,6 @@ void quickSort(std::vector<int> &v, int left, int right){
 		quickSort(v, left, pivot-1);
 		quickSort(v, pivot+1, right);
 	}
-
 }//end of quickSort
 
 void insertionSort(std::vector<int> &v){
@@ -148,7 +145,7 @@ void insertionSort(std::vector<int> &v){
 
 	int j;
 	int current;
-	for(int i=1; i<v.size(); i++){
+	for(size_t i=1; i<v.size(); i++){
 		current = v[i];
 		j = i-1;
 		while(j >= 0 && current < v[j]){
@@ -198,7 +195,7 @@ int main(){
 	std::vector<int> numbers;
 	std::string line;
 	std::string clean;
-	int counter = 0;
+	// int counter = 0;
 
 	/*first loop is for the number of lines in the file
 	* second loop is for the number of values in each line */
@@ -239,8 +236,8 @@ int main(){
 					break;
 		}
 
-		for(int i=0; i<numbers.size(); i++){
-			outfile << numbers[i] << " ";
+		for(const auto& i : numbers){
+			outfile << i << " ";
 		}
 		outfile << std::endl;
 
